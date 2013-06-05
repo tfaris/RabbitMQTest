@@ -1,0 +1,10 @@
+Django==1.5.1
+psycopg2==2.4.2
+celery==3.0.12
+django-celery==3.0.11
+django-celery-email==1.0.3
+django-kombu==0.9.4
+requests==1.0.4
+south==0.7.6
+dj-database-url==0.2.1
+pika=0.9.13
