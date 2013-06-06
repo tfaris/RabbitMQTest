@@ -8,4 +8,4 @@ requests==1.0.4
 south==0.7.6
 dj-database-url==0.2.1
 pika==0.9.13
-gunicorn==0.13.4
+gunicorn==0.17.4
