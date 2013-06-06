@@ -161,4 +161,5 @@ LOGGING = {
 
 import djcelery
 djcelery.setup_loader()
+BROKER_POOL_LIMIT = 2
 BROKER_URL = os.environ.get('rbmq_BROKER_URL') or "amqp://guest:guest@localhost:5672//"
