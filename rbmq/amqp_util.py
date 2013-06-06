@@ -1,15 +1,29 @@
+from urlparse import urlparse
+
 from django.conf import settings
+
 import celery
 from celery.task.control import inspect
+
 import pika
 __author__ = 'tfaris'
 
+GET_COUNT_CHANNEL = 31234
+
 
 def get_queued_count():
+    count = 0
     p = get_connection()
-    channel = p.channel()
-    queue = channel.queue_declare(queue='celery', passive=True)
-    return queue.method.message_count
+    channel = None
+    try:
+        channel = p.channel(GET_COUNT_CHANNEL)
+        queue = channel.queue_declare(queue='celery', passive=True)
+        count = queue.method.message_count
+    finally:
+        if channel:
+            channel.close()
+        p.close()
+    return count
 
 
 def get_active_count():
@@ -35,7 +49,8 @@ def get_incomplete_count():
 
 
 def get_connection():
-    c = celery.current_app
-    conn = c.connection()
-    creds = pika.PlainCredentials(conn.userid, conn.password)
-    return pika.BlockingConnection(pika.ConnectionParameters(conn.hostname, credentials=creds))
+    url = urlparse(settings.BROKER_URL)
+    creds = pika.PlainCredentials(url.username, url.password)
+    return pika.BlockingConnection(pika.ConnectionParameters(host=url.hostname,
+                                                             virtual_host=url.path[1:],
+                                                             credentials=creds))
